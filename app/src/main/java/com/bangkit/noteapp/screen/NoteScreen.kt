@@ -36,14 +36,14 @@ import com.bangkit.noteapp.components.NoteButton
 import com.bangkit.noteapp.components.NoteInputText
 import com.bangkit.noteapp.data.NotesDataSource
 import com.bangkit.noteapp.model.Note
-import java.time.format.DateTimeFormatter
+import com.bangkit.noteapp.util.formatDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteScreen(
     notes: List<Note>,
     onAddNote: (Note) -> Unit,
-    onRemoveNote: (Note) -> Unit
+    onDeleteNote: (Note) -> Unit
 ) {
 
     var title by remember {
@@ -107,9 +107,12 @@ fun NoteScreen(
         Divider(modifier = Modifier.padding(10.dp))
         LazyColumn {
             items(notes) { note ->
-                NoteRow(note = note, onNoteClicked = {
-                    onRemoveNote(note)
-                })
+                NoteRow(
+                    note = note,
+                    onNoteClicked = {
+                        onDeleteNote(it)
+                    }
+                )
             }
         }
     }
@@ -139,10 +142,9 @@ fun NoteRow(
             Text(text = note.title, style = MaterialTheme.typography.bodyLarge)
             Text(text = note.description, style = MaterialTheme.typography.bodyMedium)
             Text(
-                text = note.entryDate.format(DateTimeFormatter.ofPattern("EEE. d MMM")),
+                text = formatDate(note.entryDate.time),
                 style = MaterialTheme.typography.labelSmall
             )
-
         }
     }
 }
@@ -150,5 +152,5 @@ fun NoteRow(
 @Preview(showBackground = true)
 @Composable
 fun NoteScreenPreview() {
-    NoteScreen(notes = NotesDataSource().loadNotes(), onAddNote = {}, onRemoveNote = {})
+    NoteScreen(notes = NotesDataSource().loadNotes(), onAddNote = {}, onDeleteNote = {})
 }
